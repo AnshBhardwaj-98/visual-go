@@ -1,15 +1,15 @@
 export const bubbleSort = (array) => {
   const size = array.length;
-  const SortingAnimation = []; // Use array instead of object
+  const SortingAnimation = [];
 
   for (let i = 0; i < size; i++) {
     for (let j = 0; j < size - i - 1; j++) {
       const current = {};
-      current.comparison = [j, j + 1]; // store comparison indexes
+      current.comparison = [j, j + 1];
 
       if (array[j] > array[j + 1]) {
         [array[j], array[j + 1]] = [array[j + 1], array[j]];
-        current.swap = [j, j + 1]; // store swap indexes
+        current.swap = [j, j + 1];
       }
 
       SortingAnimation.push(current);
