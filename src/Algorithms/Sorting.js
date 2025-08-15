@@ -134,32 +134,83 @@ export const mergeSort = (array) => {
 };
 
 // wip {add sortingAnimation logic}
-QuickSort = (array, SortingAnimation, low, high) => {
-  if (low >= high) return;
+// const QuickSort = (array, SortingAnimation, low, high) => {
+//   if (low >= high) return;
 
-  let s = low,
-    e = high,
-    mid = (s + e) / 2;
-  let pivot = array[mid];
+//   let s = low,
+//     e = high,
+//     mid = (s + e) / 2;
+//   let pivot = array[mid];
 
-  while (s <= e) {
-    while (array[s] < pivot) s++;
-    while (array[e] > pivot) e--;
+//   SortingAnimation.push({ comparison: [s, e], swap: null });
 
-    if (s <= e) {
-      [array[s], array[e]] = [array[e], array[s]];
-      s++;
-      e--;
-    }
-  }
-  QuickSort(array, SortingAnimation, low, e);
-  QuickSort(array, SortingAnimation, s, high);
-};
+//   while (s <= e) {
+//     while (array[s] < pivot) {
+//       s++;
+//       SortingAnimation.push({ comparison: [s, e], swap: null });
+//     }
+//     while (array[e] > pivot) {
+//       e--;
+//       SortingAnimation.push({ comparison: [s, e], swap: null });
+//     }
+
+//     if (s <= e) {
+//       [array[s], array[e]] = [array[e], array[s]];
+//       SortingAnimation.push({ comparison: [s, e], swap: [s, e] });
+//       s++;
+//       e--;
+//       SortingAnimation.push({ comparison: [s, e], swap: null });
+//     }
+//   }
+//   QuickSort(array, SortingAnimation, low, e);
+//   QuickSort(array, SortingAnimation, s, high);
+// };
 
 export const callQuickSort = (array) => {
   const SortingAnimation = [];
+
+  const partition = (array, low, high) => {
+    let mid = Math.floor((low + high) / 2);
+    const piv = array[mid];
+    let i = low,
+      j = high;
+
+    SortingAnimation.push({ comparison: [i, j], swap: null, pivot: mid });
+    while (i <= j) {
+      while (array[i] < piv) {
+        i++;
+        SortingAnimation.push({ comparison: [i, mid], swap: null, pivot: mid });
+      }
+      while (array[j] > piv) {
+        j--;
+        SortingAnimation.push({ comparison: [mid, j], swap: null, pivot: mid });
+      }
+
+      if (i <= j) {
+        [array[i], array[j]] = [array[j], array[i]];
+        SortingAnimation.push({ comparison: [i, j], swap: [i, j], pivot: mid });
+
+        if (i === mid) mid = j;
+        else if (j === mid) mid = i;
+
+        i++;
+        j--;
+        // SortingAnimation.push({ comparison: [i, j], swap: [i, j], pivot: mid });
+      }
+    }
+    return i;
+  };
+
+  const QuickSort = (array, low, high) => {
+    if (low < high) {
+      const pi = partition(array, low, high);
+      QuickSort(array, low, pi - 1);
+      QuickSort(array, pi, high);
+    }
+  };
+
   const size = array.length - 1;
-  QuickSort(array, SortingAnimation, 0, size);
+  QuickSort(array, 0, size);
 
   return SortingAnimation;
 };

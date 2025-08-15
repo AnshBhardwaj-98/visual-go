@@ -8,7 +8,6 @@ export default class AlgoVisualizer extends Component {
       array: [],
       selectedAlgo: "",
       sliderValue: 300,
-      timeTaken: 0,
     };
   }
 
@@ -68,6 +67,42 @@ export default class AlgoVisualizer extends Component {
     }
   };
 
+  handelAnimationQuickSort = (x) => {
+    const len = x.length;
+    for (let i = 0; i < len; i++) {
+      const { comparison, swap, pivot } = x[i];
+
+      setTimeout(() => {
+        const arrayBars = document.getElementsByClassName("array-bar");
+
+        if (
+          comparison &&
+          comparison.length === 2 &&
+          arrayBars[comparison[0]] &&
+          arrayBars[comparison[1]]
+        ) {
+          arrayBars[comparison[0]].style.backgroundColor = "red";
+          arrayBars[comparison[1]].style.backgroundColor = "red";
+          arrayBars[pivot].style.backgroundColor = "blue";
+
+          if (swap && swap.length === 2) {
+            const a = arrayBars[comparison[0]].style.height;
+            const b = arrayBars[comparison[1]].style.height;
+
+            arrayBars[comparison[0]].style.height = b;
+            arrayBars[comparison[1]].style.height = a;
+          }
+        }
+
+        setTimeout(() => {
+          arrayBars[comparison[0]].style.backgroundColor = "white";
+          arrayBars[comparison[1]].style.backgroundColor = "white";
+          arrayBars[pivot].style.backgroundColor = "white";
+        }, 10);
+      }, i * 10);
+    }
+  };
+
   handleAlgorithm = () => {
     let algo = this.state.selectedAlgo;
 
@@ -95,11 +130,15 @@ export default class AlgoVisualizer extends Component {
 
       case "merge":
         const newArrMerge = SortingAlgorithms.mergeSort(this.state.array);
+        console.log(newArrMerge);
         this.handelAnimation(newArrMerge);
         break;
 
       case "quick":
-        console.log("quick");
+        const newArrQuick = SortingAlgorithms.callQuickSort(this.state.array);
+        this.handelAnimationQuickSort(newArrQuick);
+        console.log(newArrQuick);
+
         break;
 
       case "heap":
@@ -165,9 +204,9 @@ export default class AlgoVisualizer extends Component {
               <option value="quick">Quick Sort</option>
               <option value="heap">Heap Sort</option>
             </select>
-            <p className="mt-2 text-sm text-gray-600">
+            {/* <p className="mt-2 text-sm text-gray-600">
               Selected: {this.state.selectedAlgo || "None"}
-            </p>
+            </p> */}
           </div>
           <button
             className="p-3 bg-fuchsia-700 px-4 text-white rounded-sm cursor-pointer"
