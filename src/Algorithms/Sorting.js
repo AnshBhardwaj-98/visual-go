@@ -133,39 +133,6 @@ export const mergeSort = (array) => {
   return SortingAnimation;
 };
 
-// wip {add sortingAnimation logic}
-// const QuickSort = (array, SortingAnimation, low, high) => {
-//   if (low >= high) return;
-
-//   let s = low,
-//     e = high,
-//     mid = (s + e) / 2;
-//   let pivot = array[mid];
-
-//   SortingAnimation.push({ comparison: [s, e], swap: null });
-
-//   while (s <= e) {
-//     while (array[s] < pivot) {
-//       s++;
-//       SortingAnimation.push({ comparison: [s, e], swap: null });
-//     }
-//     while (array[e] > pivot) {
-//       e--;
-//       SortingAnimation.push({ comparison: [s, e], swap: null });
-//     }
-
-//     if (s <= e) {
-//       [array[s], array[e]] = [array[e], array[s]];
-//       SortingAnimation.push({ comparison: [s, e], swap: [s, e] });
-//       s++;
-//       e--;
-//       SortingAnimation.push({ comparison: [s, e], swap: null });
-//     }
-//   }
-//   QuickSort(array, SortingAnimation, low, e);
-//   QuickSort(array, SortingAnimation, s, high);
-// };
-
 export const callQuickSort = (array) => {
   const SortingAnimation = [];
 
