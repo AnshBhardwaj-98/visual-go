@@ -8,6 +8,7 @@ export default class AlgoVisualizer extends Component {
       array: [],
       selectedAlgo: "",
       sliderValue: 300,
+      speedValue: 15,
     };
   }
 
@@ -30,6 +31,10 @@ export default class AlgoVisualizer extends Component {
 
   handleSliderChange = (event) => {
     this.setState({ sliderValue: event.target.value });
+    this.resetArray;
+  };
+  handleSpeedChange = (event) => {
+    this.setState({ speedValue: event.target.value });
     this.resetArray;
   };
 
@@ -62,8 +67,8 @@ export default class AlgoVisualizer extends Component {
         setTimeout(() => {
           arrayBars[comparison[0]].style.backgroundColor = "white";
           arrayBars[comparison[1]].style.backgroundColor = "white";
-        }, 10);
-      }, i * 10);
+        }, this.state.speedValue);
+      }, i * this.state.speedValue);
     }
   };
 
@@ -98,8 +103,48 @@ export default class AlgoVisualizer extends Component {
           arrayBars[comparison[0]].style.backgroundColor = "white";
           arrayBars[comparison[1]].style.backgroundColor = "white";
           arrayBars[pivot].style.backgroundColor = "white";
-        }, 10);
-      }, i * 10);
+        }, this.state.speedValue);
+      }, i * this.state.speedValue);
+    }
+  };
+
+  handleAnimationMergeSort = (animations) => {
+    const arrayBars = document.getElementsByClassName("array-bar");
+    const speed = this.state.speedValue;
+    const len = animations.length;
+
+    for (let i = 0; i < len; i++) {
+      const { comparison, swap } = animations[i];
+
+      setTimeout(() => {
+        // Step 1: Highlight bars being compared
+        if (
+          comparison &&
+          comparison.length === 2 &&
+          arrayBars[comparison[0]] &&
+          arrayBars[comparison[1]]
+        ) {
+          arrayBars[comparison[0]].style.backgroundColor = "red";
+          arrayBars[comparison[1]].style.backgroundColor = "red";
+        }
+
+        // Step 2: If swap exists, overwrite the height (merge doesn't "swap", it sets values)
+        if (swap && swap.length === 2) {
+          const fromBar = arrayBars[swap[1]];
+          const toBar = arrayBars[swap[0]];
+          if (fromBar && toBar) {
+            toBar.style.height = fromBar.style.height;
+          }
+        }
+
+        // Step 3: Reset colors back to white
+        setTimeout(() => {
+          if (comparison && comparison.length === 2) {
+            arrayBars[comparison[0]].style.backgroundColor = "white";
+            arrayBars[comparison[1]].style.backgroundColor = "white";
+          }
+        }, speed / 2);
+      }, i * speed);
     }
   };
 
@@ -131,7 +176,7 @@ export default class AlgoVisualizer extends Component {
       case "merge":
         const newArrMerge = SortingAlgorithms.mergeSort(this.state.array);
         console.log(newArrMerge);
-        this.handelAnimation(newArrMerge);
+        this.handleAnimationMergeSort(newArrMerge);
         break;
 
       case "quick":
@@ -142,7 +187,8 @@ export default class AlgoVisualizer extends Component {
         break;
 
       case "heap":
-        console.log("heap");
+        const newArrHeap = SortingAlgorithms.callHeapSort(this.state.array);
+        this.handelAnimation(newArrHeap);
         break;
 
       default:
@@ -169,6 +215,22 @@ export default class AlgoVisualizer extends Component {
 
         {/* controlls */}
         <div className="w-full h-24 flex items-center justify-center py-2 ">
+          <div className="mx-2 text-white">
+            <label className="block mb-2 text-sm font-medium ">
+              Speed: {this.state.speedValue}{" "}
+              <span className="text-red-400">
+                (slide left to increase speed and right to slow down)
+              </span>
+            </label>
+            <input
+              type="range"
+              min="1"
+              max="30"
+              value={this.state.speedValue}
+              onChange={this.handleSpeedChange}
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-fuchsia-500"
+            />
+          </div>
           <div className="mx-2 text-white">
             <label className="block mb-2 text-sm font-medium ">
               Array Size: {this.state.sliderValue}

@@ -66,56 +66,63 @@ export const selectionSort = (array) => {
 export const mergeSort = (array) => {
   const SortingAnimation = [];
 
+  // Convert array into objects with original index
+  const arrWithIndex = array.map((value, index) => ({ value, index }));
+
   const merge = (arr, left, mid, right) => {
     const n1 = mid - left + 1;
     const n2 = right - mid;
 
-    const L = [];
-    const R = [];
-
-    for (let i = 0; i < n1; i++) L.push(arr[left + i]);
-    for (let j = 0; j < n2; j++) R.push(arr[mid + 1 + j]);
+    const L = arr.slice(left, mid + 1);
+    const R = arr.slice(mid + 1, right + 1);
 
     let i = 0,
       j = 0,
       k = left;
 
     while (i < n1 && j < n2) {
+      // Highlight bars being compared
       SortingAnimation.push({
-        comparison: [left + i, mid + 1 + j],
+        comparison: [L[i].index, R[j].index],
         swap: null,
       });
-      if (L[i] <= R[j]) {
-        arr[k] = L[i];
+
+      if (L[i].value <= R[j].value) {
+        // Placing L[i] at position k
         SortingAnimation.push({
-          comparison: [k, left + i],
-          swap: [k, left + i],
+          comparison: [L[i].index, arr[k].index],
+          swap: [arr[k].index, L[i].index],
         });
+        arr[k] = L[i];
         i++;
       } else {
-        arr[k] = R[j];
+        // Placing R[j] at position k
         SortingAnimation.push({
-          comparison: [k, mid + 1 + j],
-          swap: [k, mid + 1 + j],
+          comparison: [R[j].index, arr[k].index],
+          swap: [arr[k].index, R[j].index],
         });
+        arr[k] = R[j];
         j++;
       }
       k++;
     }
 
     while (i < n1) {
+      SortingAnimation.push({
+        comparison: [L[i].index, arr[k].index],
+        swap: [arr[k].index, L[i].index],
+      });
       arr[k] = L[i];
-      SortingAnimation.push({ comparison: [k, left + i], swap: [k, left + i] });
       i++;
       k++;
     }
 
     while (j < n2) {
-      arr[k] = R[j];
       SortingAnimation.push({
-        comparison: [k, mid + 1 + j],
-        swap: [k, mid + 1 + j],
+        comparison: [R[j].index, arr[k].index],
+        swap: [arr[k].index, R[j].index],
       });
+      arr[k] = R[j];
       j++;
       k++;
     }
@@ -129,7 +136,8 @@ export const mergeSort = (array) => {
     merge(arr, left, mid, right);
   };
 
-  mergeSortRecursive(array, 0, array.length - 1);
+  mergeSortRecursive(arrWithIndex, 0, arrWithIndex.length - 1);
+
   return SortingAnimation;
 };
 
@@ -162,7 +170,6 @@ export const callQuickSort = (array) => {
 
         i++;
         j--;
-        // SortingAnimation.push({ comparison: [i, j], swap: [i, j], pivot: mid });
       }
     }
     return i;
@@ -178,6 +185,62 @@ export const callQuickSort = (array) => {
 
   const size = array.length - 1;
   QuickSort(array, 0, size);
+
+  return SortingAnimation;
+};
+
+export const callHeapSort = (array) => {
+  const SortingAnimation = [];
+
+  const heapify = (arr, n, i) => {
+    let largest = i;
+    const left = 2 * i + 1;
+    const right = 2 * i + 2;
+
+    // Compare left child
+    if (left < n) {
+      SortingAnimation.push({ comparison: [left, largest], swap: null });
+      if (arr[left] > arr[largest]) {
+        largest = left;
+      }
+    }
+
+    // Compare right child
+    if (right < n) {
+      SortingAnimation.push({ comparison: [right, largest], swap: null });
+      if (arr[right] > arr[largest]) {
+        largest = right;
+      }
+    }
+
+    // Swap if needed
+    if (largest !== i) {
+      [arr[i], arr[largest]] = [arr[largest], arr[i]];
+      SortingAnimation.push({ comparison: [i, largest], swap: [i, largest] });
+
+      // Recursively heapify affected subtree
+      heapify(arr, n, largest);
+    }
+  };
+
+  const heapSort = (arr) => {
+    const n = arr.length;
+
+    // Build max heap
+    for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
+      heapify(arr, n, i);
+    }
+
+    // Extract elements from heap one by one
+    for (let i = n - 1; i > 0; i--) {
+      [arr[0], arr[i]] = [arr[i], arr[0]];
+      SortingAnimation.push({ comparison: [0, i], swap: [0, i] });
+
+      heapify(arr, i, 0);
+    }
+  };
+
+  heapSort(array);
 
   return SortingAnimation;
 };
