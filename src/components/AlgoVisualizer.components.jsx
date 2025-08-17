@@ -175,7 +175,7 @@ export default class AlgoVisualizer extends Component {
 
       case "merge":
         const newArrMerge = SortingAlgorithms.mergeSort(this.state.array);
-        console.log(newArrMerge);
+        console.log(this.state.array);
         this.handleAnimationMergeSort(newArrMerge);
         break;
 
@@ -192,7 +192,6 @@ export default class AlgoVisualizer extends Component {
         break;
 
       default:
-        console.log("unknown");
         break;
     }
   };

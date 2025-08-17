@@ -66,7 +66,6 @@ export const selectionSort = (array) => {
 export const mergeSort = (array) => {
   const SortingAnimation = [];
 
-  // Convert array into objects with original index
   const arrWithIndex = array.map((value, index) => ({ value, index }));
 
   const merge = (arr, left, mid, right) => {
