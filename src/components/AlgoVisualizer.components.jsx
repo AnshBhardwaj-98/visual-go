@@ -132,7 +132,7 @@ export default class AlgoVisualizer extends Component {
           const { index, newHeight } = step.overwrite;
           if (arrayBars[index]) {
             arrayBars[index].style.height = `${newHeight}px`;
-            arrayBars[index].style.backgroundColor = "green";
+            arrayBars[index].style.backgroundColor = "blue";
             setTimeout(() => {
               arrayBars[index].style.backgroundColor = "white";
             }, this.state.speedValue * 0.5);
