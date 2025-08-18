@@ -66,7 +66,8 @@ export const selectionSort = (array) => {
 export const mergeSort = (array) => {
   const SortingAnimation = [];
 
-  const arrWithIndex = array.map((value, index) => ({ value, index }));
+  // Work on a copy to avoid mutating the original
+  const arr = array.slice();
 
   const merge = (arr, left, mid, right) => {
     const n1 = mid - left + 1;
@@ -80,48 +81,33 @@ export const mergeSort = (array) => {
       k = left;
 
     while (i < n1 && j < n2) {
-      // Highlight bars being compared
-      SortingAnimation.push({
-        comparison: [L[i].index, R[j].index],
-        swap: null,
-      });
+      // highlight comparison
+      SortingAnimation.push({ comparison: [left + i, mid + 1 + j] });
 
-      if (L[i].value <= R[j].value) {
-        // Placing L[i] at position k
-        SortingAnimation.push({
-          comparison: [L[i].index, arr[k].index],
-          swap: [arr[k].index, L[i].index],
-        });
+      if (L[i] <= R[j]) {
         arr[k] = L[i];
+        SortingAnimation.push({ overwrite: { index: k, newHeight: L[i] } });
         i++;
       } else {
-        // Placing R[j] at position k
-        SortingAnimation.push({
-          comparison: [R[j].index, arr[k].index],
-          swap: [arr[k].index, R[j].index],
-        });
         arr[k] = R[j];
+        SortingAnimation.push({ overwrite: { index: k, newHeight: R[j] } });
         j++;
       }
       k++;
     }
 
+    // Copy remaining L elements
     while (i < n1) {
-      SortingAnimation.push({
-        comparison: [L[i].index, arr[k].index],
-        swap: [arr[k].index, L[i].index],
-      });
       arr[k] = L[i];
+      SortingAnimation.push({ overwrite: { index: k, newHeight: L[i] } });
       i++;
       k++;
     }
 
+    // Copy remaining R elements
     while (j < n2) {
-      SortingAnimation.push({
-        comparison: [R[j].index, arr[k].index],
-        swap: [arr[k].index, R[j].index],
-      });
       arr[k] = R[j];
+      SortingAnimation.push({ overwrite: { index: k, newHeight: R[j] } });
       j++;
       k++;
     }
@@ -135,7 +121,7 @@ export const mergeSort = (array) => {
     merge(arr, left, mid, right);
   };
 
-  mergeSortRecursive(arrWithIndex, 0, arrWithIndex.length - 1);
+  mergeSortRecursive(arr, 0, arr.length - 1);
 
   return SortingAnimation;
 };

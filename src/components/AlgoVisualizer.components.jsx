@@ -108,44 +108,38 @@ export default class AlgoVisualizer extends Component {
     }
   };
 
-  handleAnimationMergeSort = (animations) => {
+  handleMergeSortAnimation = (x) => {
     const arrayBars = document.getElementsByClassName("array-bar");
-    const speed = this.state.speedValue;
-    const len = animations.length;
 
-    for (let i = 0; i < len; i++) {
-      const { comparison, swap } = animations[i];
-
+    x.forEach((step, i) => {
       setTimeout(() => {
-        // Step 1: Highlight bars being compared
-        if (
-          comparison &&
-          comparison.length === 2 &&
-          arrayBars[comparison[0]] &&
-          arrayBars[comparison[1]]
-        ) {
-          arrayBars[comparison[0]].style.backgroundColor = "red";
-          arrayBars[comparison[1]].style.backgroundColor = "red";
+        // Comparison highlight
+        if (step.comparison && step.comparison.length === 2) {
+          const [a, b] = step.comparison;
+
+          if (arrayBars[a] && arrayBars[b]) {
+            arrayBars[a].style.backgroundColor = "red";
+            arrayBars[b].style.backgroundColor = "red";
+          }
+          setTimeout(() => {
+            arrayBars[a].style.backgroundColor = "white";
+            arrayBars[b].style.backgroundColor = "white";
+          }, this.state.speedValue * 2);
         }
 
-        // Step 2: If swap exists, overwrite the height (merge doesn't "swap", it sets values)
-        if (swap && swap.length === 2) {
-          const fromBar = arrayBars[swap[1]];
-          const toBar = arrayBars[swap[0]];
-          if (fromBar && toBar) {
-            toBar.style.height = fromBar.style.height;
+        //Overwrite event
+        if (step.overwrite) {
+          const { index, newHeight } = step.overwrite;
+          if (arrayBars[index]) {
+            arrayBars[index].style.height = `${newHeight}px`;
+            arrayBars[index].style.backgroundColor = "green";
+            setTimeout(() => {
+              arrayBars[index].style.backgroundColor = "white";
+            }, this.state.speedValue * 0.5);
           }
         }
-
-        // Step 3: Reset colors back to white
-        setTimeout(() => {
-          if (comparison && comparison.length === 2) {
-            arrayBars[comparison[0]].style.backgroundColor = "white";
-            arrayBars[comparison[1]].style.backgroundColor = "white";
-          }
-        }, speed / 2);
-      }, i * speed);
-    }
+      }, i * this.state.speedValue);
+    });
   };
 
   handleAlgorithm = () => {
@@ -161,7 +155,6 @@ export default class AlgoVisualizer extends Component {
         const newArrInsertion = SortingAlgorithms.insertionSort(
           this.state.array
         );
-        console.log(newArrInsertion);
 
         this.handelAnimation(newArrInsertion);
         break;
@@ -175,14 +168,12 @@ export default class AlgoVisualizer extends Component {
 
       case "merge":
         const newArrMerge = SortingAlgorithms.mergeSort(this.state.array);
-        console.log(this.state.array);
-        this.handleAnimationMergeSort(newArrMerge);
+        this.handleMergeSortAnimation(newArrMerge);
         break;
 
       case "quick":
         const newArrQuick = SortingAlgorithms.callQuickSort(this.state.array);
         this.handelAnimationQuickSort(newArrQuick);
-        console.log(newArrQuick);
 
         break;
 
